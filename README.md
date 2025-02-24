@@ -1,4 +1,4 @@
-# Streaming Platforms Content Analysis
+# Cross Platform Movie Recommendation System
 
 This project aims to develop a cross-platform recommendation application that helps users discover new movies
 and TV shows across different streaming services. If a user enjoys a particular show or movie on one platform,
