@@ -1,0 +1,18 @@
+{
+    "model_type": "content-based",
+    "average_content_similarity": 0.4759297995917224,
+    "average_cluster_similarity": 0.9828170220777588,
+    "average_genre_similarity": 0.9411190476190475,
+    "average_thematic_similarity": 0.3567634920634921,
+    "overall_score": 0.6891573403380052,
+    "sample_size": 50,
+    "successful_evaluations": 30,
+    "cross_platform_percentage": 66.66666666666666,
+    "platform_distribution": {
+        "Netflix": 0.0,
+        "Amazon Prime": 50.0,
+        "Hulu": 50.0
+    },
+    "cluster_coverage": 0.625,
+    "active_clusters": 25
+}
