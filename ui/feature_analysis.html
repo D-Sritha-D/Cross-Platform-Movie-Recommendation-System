@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feature Analysis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --dark-color: #1e293b;
+            --light-color: #f8fafc;
+            --gray-color: #64748b;
+            --gray-light: #e2e8f0;
+            --accent-color: #1CE783;
+            --container-width: 1280px;
+            --border-radius: 8px;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f5f5f5;
+            color: var(--dark-color);
+            line-height: 1.5;
+        }
+        
+        /* Header styling */
+        header {
+            background: linear-gradient(135deg, var(--dark-color), #0f172a);
+            color: white;
+            padding: 1.5rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            max-width: var(--container-width);
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .header-title h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        /* Navigation styling */
+        .nav-tabs {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .nav-tab {
+            padding: 0.75rem 1.25rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: background-color 0.2s;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .nav-tab:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-tab.active {
+            background-color: var(--primary-color);
+        }
+        
+        .container {
+            max-width: var(--container-width);
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+        
+        h2 {
+            color: var(--dark-color);
+            margin-top: 40px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent-color);
+        }
+        
+        .visualization {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .visualization img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .viz-description {
+            margin-top: 20px;
+            line-height: 1.6;
+        }
+        
+        .key-insights {
+            background-color: #f8f9fa;
+            border-left: 4px solid var(--accent-color);
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .key-insights h3 {
+            margin-top: 0;
+            color: var(--accent-color);
+        }
+        
+        .key-insights ul {
+            margin-bottom: 0;
+            padding-left: 20px;
+        }
+        
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .header-title h1 {
+                font-size: 1.25rem;
+            }
+
+            .nav-tabs {
+                flex-wrap: wrap;
+            }
+            
+            .nav-tab {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="header-title">
+                <h1>Feature Analysis, Engineering and Selection</h1>
+            </div>
+            <div class="nav-tabs">
+                <a href="simple.html" class="nav-tab">Recommendation System</a>
+                <a href="data_explanation.html" class="nav-tab">Data Analysis</a>
+                <a href="feature_analysis.html" class="nav-tab active">Feature Analysis</a>
+                <a href="model_comparison.html" class="nav-tab">Model Comparison</a>
+            </div>
+        </div>
+    </header>
+        <div class="container">
+            <h2>Feature Correlation Analysis</h2>
+            <div class="visualization">
+                <img src="/Users/durgasrithadongla/Desktop/cap5771sp25-project/Visualizations/Feature_Analysis/correlation_matrix.png" alt="Feature Correlation Matrix">
+                <div class="viz-description">
+                    <p>This visualization shows the correlation matrix between different features in the streaming platform dataset. The color intensity represents the strength and direction of correlation between pairs of features.</p>
+                    <div class="key-insights">
+                        <h3>Key Insights:</h3>
+                        <ul>
+                            <li>Strong positive correlation (0.82) between content type and duration unit, indicating a relationship between content type (movie/TV show) and how duration is measured.</li>
+                            <li>Strong negative correlation (-0.82) between type and duration_numeric, showing that different content types have distinct duration patterns.</li>
+                            <li>Strong correlation (0.94) between genre_list and listed_in features, suggesting redundancy in how genres are represented.</li>
+                            <li>Significant negative correlation (-0.7) between date_added and platform, indicating different platforms have distinct content addition patterns.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <h2>Feature Importance for Platform Prediction</h2>
+            <div class="visualization">
+                <img src="/Users/durgasrithadongla/Desktop/cap5771sp25-project/Visualizations/Feature_Analysis/feature_importance.png" alt="Feature Importance for Platform">
+                <div class="viz-description">
+                    <p>This bar chart shows the relative importance of different features in predicting which streaming platform a title belongs to. It uses a Random Forest model to calculate feature importance scores.</p>
+                    <div class="key-insights">
+                        <h3>Key Insights:</h3>
+                        <ul>
+                            <li>Date added is by far the most important feature for determining platform, suggesting each platform has distinct content acquisition timelines.</li>
+                            <li>Country of origin is the second most important feature, showing that platforms differentiate in their international content strategy.</li>
+                            <li>Show ID, rating, and genre categories also contribute meaningfully to platform differentiation.</li>
+                            <li>Content type (movie vs. TV show) is surprisingly one of the least important features, despite the clear differences in content type distribution shown in earlier analyses.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <h2>PCA Explained Variance</h2>
+            <div class="visualization">
+                <img src="/Users/durgasrithadongla/Desktop/cap5771sp25-project/Visualizations/Feature_Analysis/pca_explained_variance.png" alt="PCA Explained Variance">
+                <div class="viz-description">
+                    <p>This plot shows the Principal Component Analysis (PCA) of the dataset features, displaying both individual and cumulative explained variance for each principal component.</p>
+                    <div class="key-insights">
+                        <h3>Key Insights:</h3>
+                        <ul>
+                            <li>The first principal component explains approximately 25% of the variance in the data.</li>
+                            <li>The first 5 components together explain approximately 65-70% of the total variance.</li>
+                            <li>It takes about 12 principal components to reach 90% explained variance, indicating the complexity of the dataset.</li>
+                            <li>The gradual slope of the cumulative variance line suggests no clear "elbow point," meaning there isn't an obvious dimensionality reduction without losing information.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <h2>Selected Features Correlation</h2>
+            <div class="visualization">
+                <img src="/Users/durgasrithadongla/Desktop/cap5771sp25-project/Visualizations/Feature_Engineering/recommendation_features_correlation.png" alt="Selected Features Correlation">
+                <div class="viz-description">
+                    <p>This visualization shows the correlation matrix for features specifically selected for the recommendation system. It highlights relationships between features that were deemed most relevant for content recommendations.</p>
+                    <div class="key-insights">
+                        <h3>Key Insights:</h3>
+                        <ul>
+                            <li>Strong correlations exist between genre-related features, indicating that certain genres tend to co-occur.</li>
+                            <li>Recency score shows strong correlations with both release year and decade, as expected.</li>
+                            <li>Content age and release year have perfect negative correlation.</li>
+                            <li>The popularity proxy shows strong correlation with cast count, suggesting titles with larger casts may be more popular.</li>
+                            <li>TF-IDF PCA components show correlation patterns with certain genres, indicating text-based content descriptors have genre associations.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <h2>Feature Selection Results</h2>
+            <div class="visualization">
+                <img src="/Users/durgasrithadongla/Desktop/cap5771sp25-project/Visualizations/Feature_Selection/final_features.png" alt="Final Selected Features for Recommendation System">
+                <div class="viz-description">
+                    <p>This visualization shows all features that were selected for inclusion in the final recommendation system model.</p>
+                    <div class="key-insights">
+                        <h3>Key Insights:</h3>
+                        <ul>
+                            <li>A diverse set of features were selected, spanning content metadata, genre information, text analysis features, and engagement metrics.</li>
+                            <li>Genre-specific features (Drama, Comedy, Action, etc.) were all included, highlighting the importance of genre in content recommendations.</li>
+                            <li>Platform-specific genre interactions (Netflix Drama, Amazon Prime Comedy, etc.) were also included to capture platform-specific preferences.</li>
+                            <li>Text-based features (TFIDF PCA components) were included to capture semantic similarity between content descriptions.</li>
+                            <li>Both temporal features (release_year, content_age) and audience features (min_age, rating) were deemed important for recommendations.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <h2>Feature Selection Frequency</h2>
+            <div class="visualization">
+                <img src="/Users/durgasrithadongla/Desktop/cap5771sp25-project/Visualizations/Feature_Selection/feature_selection_frequency.png" alt="Top Features by Selection Frequency">
+                <div class="viz-description">
+                    <p>This bar chart shows how frequently each feature was selected across different feature selection methods, highlighting the most consistently important features.</p>
+                    <div class="key-insights">
+                        <h3>Key Insights:</h3>
+                        <ul>
+                            <li>The top 9 features were selected by all feature selection methods, indicating strong consensus on their importance.</li>
+                            <li>Content-related features like International Movies on Netflix, actor/director information, cast count, and content age were universally selected.</li>
+                            <li>Engineered features like movie_duration, popularity_proxy, and recency_score were also consistently selected, validating their creation.</li>
+                            <li>Platform-specific genre features (like Netflix Drama or Hulu Comedy) were selected less frequently, suggesting they may be useful but not essential.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <h2>Random Forest Feature Importance</h2>
+            <div class="visualization">
+                <img src="/Users/durgasrithadongla/Desktop/cap5771sp25-project/Visualizations/Feature_Selection/rf_importance.png" alt="Top Features by Random Forest Importance">
+                <div class="viz-description">
+                    <p>This bar chart shows the feature importance scores from a Random Forest model, highlighting which features the model found most useful for making predictions.</p>
+                    <div class="key-insights">
+                        <h3>Key Insights:</h3>
+                        <ul>
+                            <li>Platform encoding is by far the most important feature, suggesting that the streaming platform itself is a strong predictor of content characteristics.</li>
+                            <li>Description length is the second most important feature, indicating that the amount of detail in content descriptions correlates with other content attributes.</li>
+                            <li>Actor and cast information are also important, suggesting that the talent involved in content production provides valuable signals.</li>
+                            <li>Popularity proxy, an engineered feature combining multiple signals, ranks among the top 5 features, validating its usefulness.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <h2>Mutual Information Feature Scores</h2>
+            <div class="visualization">
+                <img src="/Users/durgasrithadongla/Desktop/cap5771sp25-project/Visualizations/Feature_Selection/mutual_information.png" alt="Top Features by Mutual Information Score">
+                <div class="viz-description">
+                    <p>This visualization shows feature importance as measured by mutual information, which captures non-linear relationships between features and the target variable.</p>
+                    <div class="key-insights">
+                        <h3>Key Insights:</h3>
+                        <ul>
+                            <li>Temporal features dominate mutual information scores, with release_year, recency_score, and content_age having the highest values.</li>
+                            <li>Decade is also important, further emphasizing that time-based features are crucial for content prediction.</li>
+                            <li>Text-based features (TFIDF PCA components) have moderate mutual information scores, indicating they capture useful but not dominant signals.</li>
+                            <li>Description length and duration features show lower but still significant mutual information scores.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <div class="container">
+                <p>Created by Durga Sritha Dongla</p>
+            </div>
+        </footer>
+    </body>
+    </html>

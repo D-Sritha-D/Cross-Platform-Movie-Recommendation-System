@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Platform Comparison</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --dark-color: #1e293b;
+            --light-color: #f8fafc;
+            --gray-color: #64748b;
+            --gray-light: #e2e8f0;
+            --accent-color: #e74c3c;
+            --netflix-color: #E50914;
+            --amazon-color: #00A8E1;
+            --hulu-color: #3DBB3D;
+            --container-width: 1280px;
+            --border-radius: 8px;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f5f5f5;
+            color: var(--dark-color);
+            line-height: 1.5;
+        }
+        
+        /* Header styling */
+        header {
+            background: linear-gradient(135deg, var(--dark-color), #0f172a);
+            color: white;
+            padding: 1.5rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            max-width: var(--container-width);
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .header-title h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        /* Navigation styling */
+        .nav-tabs {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .nav-tab {
+            padding: 0.75rem 1.25rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: background-color 0.2s;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .nav-tab:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-tab.active {
+            background-color: var(--primary-color);
+        }
+        
+        .container {
+            max-width: var(--container-width);
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+        
+        .platform-colors {
+            display: flex;
+            justify-content: center;
+            margin: 15px 0;
+        }
+        
+        .color-box {
+            display: flex;
+            align-items: center;
+            margin: 0 15px;
+        }
+        
+        .color-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .netflix {
+            background-color: var(--netflix-color);
+        }
+        
+        .amazon {
+            background-color: var(--amazon-color);
+        }
+        
+        .hulu {
+            background-color: var(--hulu-color);
+        }
+        
+        h2 {
+            color: var(--dark-color);
+            margin-top: 40px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent-color);
+        }
+        
+        .visualization {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .visualization img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .viz-description {
+            margin-top: 20px;
+            line-height: 1.6;
+        }
+        
+        .key-insights {
+            background-color: #f8f9fa;
+            border-left: 4px solid var(--accent-color);
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .key-insights h3 {
+            margin-top: 0;
+            color: var(--accent-color);
+        }
+        
+        .key-insights ul {
+            margin-bottom: 0;
+            padding-left: 20px;
+        }
+        
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .header-title h1 {
+                font-size: 1.25rem;
+            }
+
+            .nav-tabs {
+                flex-wrap: wrap;
+            }
+            
+            .nav-tab {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="header-title">
+                <h1>Exploratory Data Analysis</h1>
+            </div>
+            <div class="nav-tabs">
+                <a href="simple.html" class="nav-tab">Recommendation System</a>
+                <a href="data_explanation.html" class="nav-tab active">Data Analysis</a>
+                <a href="feature_analysis.html" class="nav-tab">Feature Analysis</a>
+                <a href="model_comparison.html" class="nav-tab">Model Comparison</a>
+            </div>
+        </div>
+    </header>
+        <div class="container">
+            <h2>Platform Overview</h2>
+            <div class="visualization">
+                <img src="/Users/durgasrithadongla/Desktop/cap5771sp25-project/Visualizations/platform_overview.png" alt="Platform Overview Visualization">
+                <div class="viz-description">
+                    <p>This visualization provides a high-level overview of content libraries across the three major streaming platforms. It shows the total number of titles available on each platform, as well as the distribution between movies and TV shows.</p>
+                    <div class="key-insights">
+                        <h3>Key Insights:</h3>
+                        <ul>
+                            <li>Amazon Prime has the largest content library with 9,668 titles, followed by Netflix (8,807) and Hulu (3,073).</li>
+                            <li>Netflix has a 69.6% movie to 30.4% TV show ratio.</li>
+                            <li>Amazon Prime is heavily movie-focused with 80.8% movies compared to just 19.2% TV shows.</li>
+                            <li>Hulu is the most balanced platform with 48.3% movies and 51.7% TV shows.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <h2>Content Exclusivity Analysis</h2>
+            <div class="visualization">
+                <img src="/Users/durgasrithadongla/Desktop/cap5771sp25-project/Visualizations/content_exclusivity_analysis.png" alt="Content Exclusivity Analysis">
+                <div class="viz-description">
+                    <p>This visualization examines content exclusivity across streaming platforms, showing what percentage of content is unique to each platform versus shared with others. The Venn diagram illustrates the overlap between platforms.</p>
+                    <div class="key-insights">
+                        <h3>Key Insights:</h3>
+                        <ul>
+                            <li>Netflix has 93.4% exclusive content not available on other platforms.</li>
+                            <li>Amazon Prime has the highest exclusivity at 94.1%.</li>
+                            <li>Hulu has 86.7% exclusive content.</li>
+                            <li>Only 42 titles (less than 0.2% of all content) are available on all three platforms.</li>
+                            <li>Netflix and Amazon Prime share the most content with 305 overlapping titles.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <h2>Content Origin Analysis</h2>
+            <div class="visualization">
+                <img src="/Users/durgasrithadongla/Desktop/cap5771sp25-project/Visualizations/country_analysis.png" alt="Content Origin Analysis">
+                <div class="viz-description">
+                    <p>This visualization breaks down content by country of origin, showing the percentage of US versus international content on each platform, as well as the diversity of countries represented.</p>
+                    <div class="key-insights">
+                        <h3>Key Insights:</h3>
+                        <ul>
+                            <li>Netflix features the most diverse international catalog with content from 89 different countries.</li>
+                            <li>Amazon Prime has the highest percentage of international content at 96.5%.</li>
+                            <li>Netflix has a more balanced approach with 43.5% US content and 56.5% international content.</li>
+                            <li>Hulu has 36.6% US content and 63.4% international content.</li>
+                            <li>The UK and US dominate content production across all platforms.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <h2>Content Age Analysis</h2>
+            <div class="visualization">
+                <img src="/Users/durgasrithadongla/Desktop/cap5771sp25-project/Visualizations/content_age_analysis.png" alt="Content Age Analysis">
+                <div class="viz-description">
+                    <p>This visualization examines the age distribution of content across platforms, showing the average and median content age, along with a breakdown by age categories.</p>
+                    <div class="key-insights">
+                        <h3>Key Insights:</h3>
+                        <ul>
+                            <li>Netflix has the freshest content with an average age of 10.8 years.</li>
+                            <li>Amazon Prime has the oldest content library with an average age of 16.7 years.</li>
+                            <li>Hulu's content averages 12.4 years old.</li>
+                            <li>All platforms have similar median ages between 8-9 years.</li>
+                            <li>Amazon Prime leads in content less than 5 years old at 24.9%.</li>
+                            <li>Netflix has the highest percentage (53%) of content in the 6-10 years range.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <h2>Content Type and Release Year Analysis</h2>
+            <div class="visualization">
+                <img src="/Users/durgasrithadongla/Desktop/cap5771sp25-project/Visualizations/content_type_analysis.png" alt="Content Type and Release Year Analysis">
+                <div class="viz-description">
+                    <p>This visualization explores the distribution of movies versus TV shows across platforms and examines content additions by release year, helping understand platform strategies for content acquisition.</p>
+                    <div class="key-insights">
+                        <h3>Key Insights:</h3>
+                        <ul>
+                            <li>Amazon Prime has the highest movie-to-TV show ratio at 4.2:1.</li>
+                            <li>Netflix has a ratio of 2.3:1 (movies to TV shows).</li>
+                            <li>Hulu is the only platform with more TV shows than movies (0.9:1 ratio).</li>
+                            <li>Amazon Prime saw a dramatic increase in 2021 content additions with 1,442 titles.</li>
+                            <li>Netflix has maintained relatively consistent content additions year over year.</li>
+                            <li>Hulu has significantly fewer titles across all years compared to the other platforms.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <h2>Genre Analysis</h2>
+            <div class="visualization">
+                <img src="/Users/durgasrithadongla/Desktop/cap5771sp25-project/Visualizations/genre_analysis.png" alt="Genre Analysis">
+                <div class="viz-description">
+                    <p>This visualization examines the genre distribution across streaming platforms, showing the most popular genres overall and the genre diversity for each platform.</p>
+                    <div class="key-insights">
+                        <h3>Key Insights:</h3>
+                        <ul>
+                            <li>Drama is the dominant genre across all platforms with 7,021 titles.</li>
+                            <li>Comedy (4,440 titles) and Action (3,071 titles) round out the top three genres.</li>
+                            <li>Netflix has the highest genre diversity with 42 unique genres.</li>
+                            <li>Netflix has 37 exclusive genres not found on other platforms.</li>
+                            <li>Hulu offers 36 unique genres with 24 being exclusive.</li>
+                            <li>Amazon Prime has 31 unique genres with 18 exclusive to its platform.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <h2>Content Ratings Analysis</h2>
+            <div class="visualization">
+                <img src="/Users/durgasrithadongla/Desktop/cap5771sp25-project/Visualizations/ratings_analysis.png" alt="Content Ratings Analysis">
+                <div class="viz-description">
+                    <p>This visualization breaks down content by age ratings across platforms, showing the distribution of mature versus child-friendly content, helping to understand target audience demographics.</p>
+                    <div class="key-insights">
+                        <h3>Key Insights:</h3>
+                        <ul>
+                            <li>Netflix has the highest percentage of mature content (R/TV-MA) at 45.5%.</li>
+                            <li>Amazon Prime's content is more balanced with 24.2% mature content.</li>
+                            <li>Hulu has 23.9% mature content.</li>
+                            <li>Amazon Prime leads in child-friendly content (G/TV-Y/TV-G) at 20.1%.</li>
+                            <li>Netflix has 10.3% child-friendly content.</li>
+                            <li>Hulu has the lowest percentage of child-friendly content at 7.9%.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <div class="container">
+                <p>Created by Durga Sritha Dongla</p>
+            </div>
+        </footer>
+    </body>
+    </html>
