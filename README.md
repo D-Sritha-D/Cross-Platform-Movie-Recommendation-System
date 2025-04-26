@@ -1,75 +1,117 @@
-# Cross Platform Movie Recommendation System
+# Cross-Platform Movie Recommendation System
 
-This project aims to develop a cross-platform recommendation application that helps users discover new movies
-and TV shows across different streaming services. If a user enjoys a particular show or movie on one platform,
-the app will suggest similar content available on another platform. To make this possible, the application will
-incorporate a recommendation model that analyzes user preferences and content similarities
-Alongside the recommendation engine, the project will feature a simple, user-friendly interface that allows users
-to input their favorite content, select their preferred streaming services, and receive personalized
-recommendations. The goal is to make the app visually appealing, easy to navigate, and intuitive for all users.
+This project implements a recommendation system for movies and TV shows across multiple streaming platforms (Netflix, Amazon Prime, and Hulu) using machine learning and content-based filtering techniques.
 
 ## Requirements
 
-The project requires Python 3.8+ and the following packages:
+This project requires Python 3.8+ and the following packages:
 ```
 pandas>=2.2.0
 numpy>=1.26.3
 matplotlib>=3.8.2
 seaborn>=0.13.1
-jupyter>=1.0.0
-ipykernel>=6.29.0
-openpyxl>=3.1.2
-plotly>=5.18.0
-matplotlib-venn
+flask>=2.0.0
+flask-cors>=3.0.10
+scikit-learn>=1.0.0
+joblib>=1.1.0
+xgboost>=1.5.0
 ```
 
-## Project Structure
+## Installation Steps
 
-```
-cap5771sp25-project/
-│
-├── Data/                          
-│   ├── netflix_titles.csv        
-│   ├── amazon_prime_titles.csv  
-│   ├── hulu_titles.csv        
-│   └── all_platforms_combined.csv 
-├── Report/                  
-│   └── Milestone1.pdf
-├── Results/                  
-│   └── streaming_platforms_analysis_report.md
-├── Visualizations/          
-│   ├── platform_overview.png
-│   ├── content_type_analysis.png
-│   ├── genre_analysis.png
-│   ├── content_age_analysis.png
-│   ├── ratings_analysis.png
-│   ├── content_exclusivity_analysis.png
-│   └── country_analysis.png
-|── Scripts/                    
-│   ├── analysis.py
-│   ├── visualizations.py
-│   ├── requirements.txt
-│   ├── main.py
-```
+1. **Clone the repository**:
+   ```bash
+   git clone <repository-url>
+   cd <repository-folder>
+   ```
 
-## Setup & Installation
+2. **Create and activate a virtual environment**:
+   ```bash
+   python -m venv venv
+   # On Windows:
+   venv\Scripts\activate
+   # On macOS/Linux:
+   source venv/bin/activate
+   ```
 
-1. Clone the repository:
+3. **Install required packages**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Prepare the data**:
+   Make sure your data files are in the correct location:
+   - Place streaming platform CSV files in the `Data/` directory
+   - Ensure `all_platforms_combined.csv` is generated or available
+
+## Running the Application
+
+### 1. Start the Backend API
+
+First, start the recommendation API server:
+
 ```bash
-git clone <repository-url>
+python recommendation_api.py
 ```
 
-2. Create and activate a virtual environment:
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
+This will start the Flask server on http://localhost:8080. The API provides endpoints for:
+- Getting sample titles
+- Searching content
+- Generating recommendations
+- Fetching platform statistics
 
-3. Install required packages:
+### 2. View the Web Application
+
+There are two ways to access the web application:
+
+#### Option 1: Using a simple HTTP server
+For Python 3:
 ```bash
-pip install -r Scripts/requirements.txt
+python -m http.server 8000
 ```
-4. Run main.py:
-```bash
-python Scripts/main.py
-```
+Then open http://localhost:8000/recommendation_page.html in your web browser.
+
+#### Option 2: Directly open HTML files
+Open `recommendation_page.html` directly in your web browser to see the recommendation interface.
+
+You can also explore other HTML files:
+- `data_explanation.html` - Data analysis visualizations
+- `feature_analysis.html` - Feature engineering and selection insights
+- `model_comparison.html` - Comparison of different recommendation models
+- `evaluation.html` - Evaluation metrics and model performance
+
+## Using the Recommendation System
+
+1. **Filtering content**:
+   - Select a streaming platform (Netflix, Amazon Prime, Hulu, or All)
+   - Choose content type (Movie, TV Show, or All)
+   - Click "Apply Filters" to update the displayed titles
+
+2. **Searching**:
+   - Use the search bar to find specific titles
+   - Results will be filtered based on your platform and type selections
+
+3. **Getting recommendations**:
+   - Click on any title card to see XGBoost-powered recommendations
+   - Recommendations show similarity scores and content details
+   - The system uses a hybrid approach combining machine learning and content-based filtering
+
+## Troubleshooting
+
+- If you see a connection error, ensure the Flask API server is running on port 8080
+- Check console logs for detailed error messages
+- Make sure all data files are in the correct locations
+- Verify that all required Python packages are installed
+
+
+## Exploring the Source Code
+
+Key files to review:
+- `model_training.py` - Machine learning model training pipeline
+- `feature_engineering.py` - Feature extraction and processing 
+- `feature_selection.py` - Feature selection techniques
+- `recommendation_api.py` - Flask API for serving recommendations
+- `app.js` - Frontend JavaScript for the web interface
+
+#### Demo Link: https://drive.google.com/drive/folders/1CyCiBmm_0rlp3sI18li1EnGCYSWhkpEw?usp=drive_link
+#### PPT: https://drive.google.com/drive/folders/18L7ae-b-ucnAuQA-7nNxa8Vzmp-2WH3J?usp=sharing
