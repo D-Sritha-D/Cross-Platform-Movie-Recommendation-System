@@ -290,10 +290,11 @@
                 <h1>Model Comparison and Selection</h1>
             </div>
             <div class="nav-tabs">
-                <a href="simple.html" class="nav-tab">Recommendation System</a>
+                <a href="recommendation_page.html" class="nav-tab">Recommendation System</a>
                 <a href="data_explanation.html" class="nav-tab">Data Analysis</a>
                 <a href="feature_analysis.html" class="nav-tab">Feature Analysis</a>
                 <a href="model_comparison.html" class="nav-tab active">Model Comparison</a>
+                <a href="evaluation.html" class="nav-tab">Model Evaluation</a>
             </div>
         </div>
     </header>
@@ -338,62 +339,7 @@
                 </table>
                 
                 <div class="visualization">
-                    <img src="/Users/durgasrithadongla/Desktop/cap5771sp25-project/Visualizations/Model_Analysis/all_metrics_comparison.png" alt="Model Performance Metrics Visualization">
-                </div>
-                
-                <div class="insights">
-                    <h4>Key Insights:</h4>
-                    <ul>
-                        <li>XGBoost outperforms other models with near-perfect metrics across the board</li>
-                        <li>Random Forest shows strong performance with ~94% accuracy</li>
-                        <li>Logistic Regression performs adequately but lags behind the ensemble methods</li>
-                        <li>The models maintain consistent performance across all metrics, indicating balanced predictions</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="dashboard">
-                <div class="card">
-                    <h3>Model Accuracy Comparison</h3>
-                    <div class="visualization">
-                        <img src="/Users/durgasrithadongla/Desktop/cap5771sp25-project/Visualizations/Model_Analysis/accuracy_comparison.png" alt="Model Accuracy Comparison">
-                    </div>
-                    
-                    <h4>Performance Meters</h4>
-                    <div>
-                        <p>Logistic Regression</p>
-                        <div class="performance-meter">
-                            <div class="performance-fill accuracy-fill" style="width: 78%">78%</div>
-                        </div>
-                    </div>
-                    <div>
-                        <p>Random Forest</p>
-                        <div class="performance-meter">
-                            <div class="performance-fill accuracy-fill" style="width: 94%">94%</div>
-                        </div>
-                    </div>
-                    <div>
-                        <p>XGBoost</p>
-                        <div class="performance-meter">
-                            <div class="performance-fill accuracy-fill" style="width: 99%">99%</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <h3>Class-wise Accuracy Heatmap</h3>
-                    <div class="visualization">
-                        <img src="/Users/durgasrithadongla/Desktop/cap5771sp25-project/Visualizations/Model_Analysis/class_performance_heatmap.png" alt="Model Accuracy by Class">
-                    </div>
-                    <div class="insights">
-                        <h4>Observations:</h4>
-                        <ul>
-                            <li>Random Forest performs consistently well across all classes (93-100% accuracy)</li>
-                            <li>Logistic Regression struggles with classes 10, 12, and 7 (61-73% accuracy)</li>
-                            <li>XGBoost data appears to be missing or all zeros in this visualization</li>
-                            <li>Classes 2, 3, 6, and 4 are well-predicted by all models</li>
-                        </ul>
-                    </div>
+                    <img src="/Users/durgasrithadongla/Desktop/cap5771sp25-project/Visualizations/Model_Analysis/metrics_comparison.png" alt="Model Performance Metrics Visualization">
                 </div>
             </div>
             
@@ -401,8 +347,6 @@
             
             <div class="model-card">
                 <h3><span class="model-icon xgboost"></span>XGBoost (Best Performing Model)</h3>
-                
-                <div class="dashboard">
                     <div class="card">
                         <h3>Confusion Matrix</h3>
                         <div class="visualization">
@@ -413,30 +357,10 @@
                             <p>The XGBoost model shows excellent performance with almost perfect classification across all classes. The diagonal elements represent correct predictions, showing very high numbers, while off-diagonal elements (misclassifications) are minimal or zero.</p>
                         </div>
                     </div>
-                    
-                    <div class="card">
-                        <h3>Feature Importance</h3>
-                        <div class="visualization">
-                            <img src="/Users/durgasrithadongla/Desktop/cap5771sp25-project/Visualizations/Model_Analysis/feature_importance_XGBoost.png" alt="XGBoost Feature Importance">
-                        </div>
-                        <div class="feature-importance">
-                            <h4>Top 5 Most Important Features:</h4>
-                            <ol class="feature-list">
-                                <li>actor_Unknown (0.62)</li>
-                                <li>cast_count (0.16)</li>
-                                <li>genre_count (0.15)</li>
-                                <li>platform (0.05)</li>
-                                <li>Other features (< 0.01)</li>
-                            </ol>
-                        </div>
-                    </div>
-                </div>
             </div>
             
             <div class="model-card">
                 <h3><span class="model-icon forest"></span>Random Forest</h3>
-                
-                <div class="dashboard">
                     <div class="card">
                         <h3>Confusion Matrix</h3>
                         <div class="visualization">
@@ -447,30 +371,10 @@
                             <p>The Random Forest model shows strong performance with high numbers along the diagonal (correct predictions). Some misclassifications are visible, particularly for class 4, where 128 samples were misclassified across various other classes.</p>
                         </div>
                     </div>
-                    
-                    <div class="card">
-                        <h3>Feature Importance</h3>
-                        <div class="visualization">
-                            <img src="/Users/durgasrithadongla/Desktop/cap5771sp25-project/Visualizations/Model_Analysis/feature_importance_Random_Forest.png" alt="Random Forest Feature Importance">
-                        </div>
-                        <div class="feature-importance">
-                            <h4>Top 5 Most Important Features:</h4>
-                            <ol class="feature-list">
-                                <li>cast_count (0.27)</li>
-                                <li>genre_count (0.16)</li>
-                                <li>genre_list_clean (0.06)</li>
-                                <li>genre_list (0.05)</li>
-                                <li>listed_in (0.05)</li>
-                            </ol>
-                        </div>
-                    </div>
-                </div>
             </div>
             
             <div class="model-card">
                 <h3><span class="model-icon logistic"></span>Logistic Regression</h3>
-                
-                <div class="dashboard">
                     <div class="card">
                         <h3>Confusion Matrix</h3>
                         <div class="visualization">
@@ -481,58 +385,24 @@
                             <p>The Logistic Regression model shows moderate performance with notable confusion between certain classes. For example, there is significant misclassification between classes 10 and 12, as well as between classes 7 and 8.</p>
                         </div>
                     </div>
-                    
-                    <div class="card">
-                        <h3>Performance Analysis</h3>
-                        <div class="visualization">
-                            <img src="/Users/durgasrithadongla/Desktop/cap5771sp25-project/Visualizations/Model_Analysis/feature_target_correlation.png" alt="Feature Correlations with Target">
-                        </div>
-                        <div class="insights">
-                            <h4>Key Observations:</h4>
-                            <ul>
-                                <li>Logistic Regression relies heavily on linear relationships between features and target</li>
-                                <li>The model performs well on classes with strong linear feature correlations</li>
-                                <li>Performance lags on classes requiring more complex decision boundaries</li>
-                                <li>Cast count and actor information show the strongest correlations with the target variable</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
             </div>
             
             <h2>Advanced Evaluation Metrics</h2>
-            
-            <div class="dashboard">
-                <div class="card">
-                    <h3>ROC Curves for Top 5 Classes</h3>
-                    <div class="visualization">
-                        <img src="/Users/durgasrithadongla/Desktop/cap5771sp25-project/Visualizations/Model_Analysis/roc_curves.png" alt="ROC Curves for Top 5 Classes">
-                    </div>
-                    <div class="insights">
-                        <h4>Insights:</h4>
-                        <ul>
-                            <li>Random Forest and Logistic Regression show excellent ROC curves with high AUC values (near 1.0)</li>
-                            <li>XGBoost appears to have lower AUC values for some classes, which contradicts its overall high accuracy</li>
-                            <li>All models perform best on Classes 4, 3, and 6</li>
-                            <li>Class 5 appears to be the most challenging class to predict correctly</li>
-                        </ul>
-                    </div>
+        
+            <div class="card">
+                <h3>ROC Curves for Top 5 Classes</h3>
+                <div class="visualization">
+                    <img src="/Users/durgasrithadongla/Desktop/cap5771sp25-project/Visualizations/Model_Analysis/roc_curves.png" alt="ROC Curves for Top 5 Classes">
                 </div>
-                
-                <div class="card">
-                    <h3>Precision-Recall Curves</h3>
-                    <div class="visualization">
-                        <img src="/Users/durgasrithadongla/Desktop/cap5771sp25-project/Visualizations/Model_Analysis/precision_recall_curves.png" alt="Precision-Recall Curves">
-                    </div>
-                    <div class="insights">
-                        <h4>Insights:</h4>
-                        <ul>
-                            <li>Random Forest maintains high precision even at high recall values</li>
-                            <li>Logistic Regression shows good precision-recall trade-off for most classes</li>
-                            <li>XGBoost shows lower precision-recall curves than expected given its high overall accuracy</li>
-                            <li>Class 5 shows the poorest precision-recall curve across all models</li>
-                        </ul>
-                    </div>
+                <div class="insights">
+                    <h4>Insights:</h4>
+                    <ul>
+                        <li>XGBoost shows excellent ROC curves with high AUC values (0.93-1.00)</li>
+                        <li>Random Forest has strong performance with AUC values between 0.86-0.98</li>
+                        <li>Logistic Regression struggles with some classes, showing lower AUC values (0.32-0.82)</li>
+                        <li>All models perform best on Class 2 (AUC: 1.00, 0.98, 0.36 respectively)</li>
+                        <li>Class 5 appears to be well-handled by XGBoost (0.93) and Random Forest (0.88) but challenging for Logistic Regression (0.82)</li>
+                    </ul>
                 </div>
             </div>
             
@@ -556,6 +426,24 @@
                 </div>
             </div>
             
+            <h2>XGBoost Training Performance</h2>
+            
+            <div class="card">
+                <h3>Training History</h3>
+                <div class="visualization">
+                    <img src="/Users/durgasrithadongla/Desktop/cap5771sp25-project/Visualizations/Model_Analysis/xgboost_training.png" alt="XGBoost Training History">
+                </div>
+                <div class="insights">
+                    <h4>Training Insights:</h4>
+                    <ul>
+                        <li>The loss decreases rapidly in the first 100 iterations, showing quick model convergence</li>
+                        <li>Training and validation loss curves follow similar patterns, indicating good generalization</li>
+                        <li>No signs of overfitting as the validation loss doesn't increase over time</li>
+                        <li>After 500 iterations, the model achieves a low log loss of approximately 0.6</li>
+                    </ul>
+                </div>
+            </div>
+            
             <h2>Conclusions</h2>
             
             <div class="card">
@@ -566,8 +454,19 @@
                         <li>XGBoost is the best performing model with 99% accuracy, precision, recall, and F1 score.</li>
                         <li>Random Forest is a close second with 94% accuracy and strong performance across all classes.</li>
                         <li>Both ensemble methods (XGBoost and Random Forest) significantly outperform Logistic Regression.</li>
-                        <li>Cast count, actor information, and genre count are consistently the most important features across models.</li>
+                        <li>The most important features across all models are cast_count, actor information, and genre_count.</li>
                         <li>The recommendation system would benefit most from deploying the XGBoost model in production.</li>
+                    </ul>
+                </div>
+                
+                <div class="insights" style="margin-top: 20px;">
+                    <h4>Implementation Recommendations:</h4>
+                    <ul>
+                        <li>Deploy XGBoost as the primary recommendation engine</li>
+                        <li>Focus on ensuring accurate cast and genre data as these are crucial predictive features</li>
+                        <li>Consider using Random Forest as a backup model due to its strong performance</li>
+                        <li>Further optimize the XGBoost model with hyperparameter tuning focused on classes with lower performance</li>
+                        <li>Implement regular model retraining as new content is added to ensure continued accuracy</li>
                     </ul>
                 </div>
             </div>
@@ -575,7 +474,7 @@
         
         <footer>
             <div class="container">
-                <p>Created by Durga Sritha Dongla</p>
+                <p>Streaming Content Recommendation System - Model Analysis</p>
             </div>
         </footer>
     </body>

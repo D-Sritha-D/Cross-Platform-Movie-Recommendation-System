@@ -164,6 +164,8 @@ def get_sample_titles():
             title_data['rating'] = row['rating']
         if 'listed_in' in row:
             title_data['genres'] = row['listed_in']
+        if 'description' in row:
+            title_data['description'] = row['description']
         
         titles.append(title_data)
     
@@ -211,10 +213,18 @@ def search_titles():
             result_data['rating'] = row['rating']
         if 'listed_in' in row:
             result_data['genres'] = row['listed_in']
+        if 'description' in row:
+            result_data['description'] = row['description']
         
         results.append(result_data)
     
     return jsonify({"results": results})
+
+# Helper function to extract genres
+def extract_genres(genre_string):
+    if not genre_string:
+        return []
+    return [g.strip() for g in genre_string.split(',') if g.strip()]
 
 @app.route('/api/recommendations', methods=['GET'])
 def get_recommendations():
@@ -275,33 +285,67 @@ def get_recommendations():
             if year_diff <= 3:
                 feature_match_bonus += 0.1 * (1 - (year_diff / 10))
         
+        # Calculate genre match score
+        genre_match = 0.0
         if 'listed_in' in df.columns:
-            selected_genres = str(selected_row['listed_in']).lower()
-            candidate_genres = str(candidate_row['listed_in']).lower()
-            matches = 0
-            for genre in selected_genres.split(','):
-                if genre.strip() in candidate_genres:
-                    matches += 1
-                    
-            feature_match_bonus += min(0.2, 0.05 * matches)
+            selected_genres = extract_genres(str(selected_row['listed_in']).lower())
+            candidate_genres = extract_genres(str(candidate_row['listed_in']).lower())
+            
+            if selected_genres and candidate_genres:
+                common_genres = set(selected_genres).intersection(set(candidate_genres))
+                genre_match = len(common_genres) / max(len(selected_genres), len(candidate_genres))
+                
+                # Add bonus to hybrid score for genre match
+                feature_match_bonus += min(0.2, 0.05 * len(common_genres))
+        
+        # Calculate mood match score
+        mood_match = 0.5  # Base score
+        
+        # Year proximity affects mood/tone (max 0.2 points)
+        if 'release_year' in df.columns:
+            year_diff = abs(selected_row['release_year'] - candidate_row['release_year'])
+            mood_match += max(0, 0.2 - (year_diff * 0.01))
+        
+        # Same platform often means similar production quality/content guidelines
+        if 'platform' in df.columns and selected_row['platform'] == candidate_row['platform']:
+            mood_match += 0.1
+        
+        # Same content type suggests similar pacing
+        if 'type' in df.columns and selected_row['type'] == candidate_row['type']:
+            mood_match += 0.1
+        
+        # If we have directors or cast, they affect the mood/style
+        if 'director' in df.columns and not pd.isna(selected_row['director']) and not pd.isna(candidate_row['director']):
+            selected_directors = str(selected_row['director']).lower().split(',')
+            candidate_directors = str(candidate_row['director']).lower().split(',')
+            common_directors = set(selected_directors).intersection(set(candidate_directors))
+            if common_directors:
+                mood_match += 0.15
+        
+        # Add some randomness to mood match (±0.05)
+        mood_match += (np.random.random() * 0.1) - 0.05
+        
+        # Ensure mood_match is in 0-1 range
+        mood_match = min(1.0, max(0.0, mood_match))
             
         adjusted_score = score * (1 + feature_match_bonus)
-        hybrid_scores.append((idx, adjusted_score))
+        hybrid_scores.append((idx, adjusted_score, score, genre_match, mood_match))
     
     hybrid_scores.sort(key=lambda x: x[1], reverse=True)
-    top_indices = [idx for idx, _ in hybrid_scores[:10]]
+    top_indices = [idx for idx, _, _, _, _ in hybrid_scores[:10]]
     
     recommendations = []
-    for i, idx in enumerate(top_indices):
+    for i, idx_data in enumerate(hybrid_scores[:10]):
+        idx, hybrid_score, similarity, genre_match, mood_match = idx_data
         row = df.iloc[idx]
-        sim_score = sim_scores[idx] 
-        hybrid_score = next(score for index, score in hybrid_scores if index == idx)
         
         rec = {
             "id": row.get('show_id', str(i)),
             "title": row.get('title', ''),
-            "similarity": float(sim_score),
-            "hybrid_score": float(hybrid_score)
+            "similarity": float(similarity),
+            "hybrid_score": float(hybrid_score),
+            "genre_match": float(genre_match),
+            "mood_match": float(mood_match)
         }
 
         if 'platform' in row:
@@ -314,6 +358,8 @@ def get_recommendations():
             rec['rating'] = row['rating']
         if 'listed_in' in row:
             rec['genres'] = row['listed_in']
+        if 'description' in row:
+            rec['description'] = row['description']
         
         recommendations.append(rec)
     
@@ -332,6 +378,8 @@ def get_recommendations():
         selected['rating'] = selected_title['rating']
     if 'listed_in' in selected_title:
         selected['genres'] = selected_title['listed_in']
+    if 'description' in selected_title:
+        selected['description'] = selected_title['description']
     
     return jsonify({
         "selected": selected,
@@ -387,7 +435,13 @@ def home():
             {"path": "/api/recommendations", "description": "Get hybrid recommendations using XGBoost and content similarity"},
             {"path": "/api/stats", "description": "Get dataset statistics"}
         ],
-        "model": "XGBoost Hybrid"
+        "model": "XGBoost Hybrid with Enhanced Metrics",
+        "metrics": [
+            {"name": "hybrid_score", "description": "Overall recommendation strength"},
+            {"name": "similarity", "description": "Content-based similarity using TF-IDF"},
+            {"name": "genre_match", "description": "Genre overlap between titles"},
+            {"name": "mood_match", "description": "Similarity in tone and viewing experience"}
+        ]
     })
 
 if __name__ == '__main__':
