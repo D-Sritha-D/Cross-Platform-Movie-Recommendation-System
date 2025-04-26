@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Evaluation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --dark-color: #1e293b;
+            --light-color: #f8fafc;
+            --gray-color: #64748b;
+            --gray-light: #e2e8f0;
+            --accent-color: #3498db;
+            --logistic-color: #3498db;
+            --forest-color: #2ecc71;
+            --xgboost-color: #e74c3c;
+            --container-width: 1280px;
+            --border-radius: 8px;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f5f5f5;
+            color: var(--dark-color);
+            line-height: 1.5;
+        }
+        
+        /* Header styling */
+        header {
+            background: linear-gradient(135deg, var(--dark-color), #0f172a);
+            color: white;
+            padding: 1.5rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            max-width: var(--container-width);
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .header-title h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        /* Navigation styling */
+        .nav-tabs {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .nav-tab {
+            padding: 0.75rem 1.25rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: background-color 0.2s;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .nav-tab:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-tab.active {
+            background-color: var(--primary-color);
+        }
+        
+        .container {
+            max-width: var(--container-width);
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+        
+        h2 {
+            color: var(--dark-color);
+            margin-top: 40px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent-color);
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .card h3 {
+            margin-top: 0;
+            color: var(--dark-color);
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-title h1 {
+                font-size: 1.25rem;
+            }
+
+            .nav-tabs {
+                flex-wrap: wrap;
+            }
+            
+            .nav-tab {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.8rem;
+            }
+        }
+        
+        .model-toggle-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .model-toggle-button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            background-color: #f5f5f5;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .model-toggle-button.active {
+            color: white;
+        }
+
+        .model-toggle-button.logistic-btn.active {
+            background-color: var(--logistic-color);
+        }
+
+        .model-toggle-button.forest-btn.active {
+            background-color: var(--forest-color);
+        }
+
+        .model-toggle-button.xgboost-btn.active {
+            background-color: var(--xgboost-color);
+        }
+
+        .matrix-container {
+            display: none;
+        }
+
+        .matrix-container.active {
+            display: block;
+        }
+        
+        .feature-container {
+            display: none;
+        }
+        
+        .feature-container.active {
+            display: block;
+        }
+        
+        .roc-container {
+            display: none;
+        }
+        
+        .roc-container.active {
+            display: block;
+        }
+
+        .visualization img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .insights {
+            background-color: #e8f4f8;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .insights h4 {
+            margin-top: 0;
+            color: #2980b9;
+        }
+
+        .metrics-chart-container {
+            position: relative;
+            height: 400px;
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        .model-section {
+            margin-bottom: 30px;
+        }
+        
+        .model-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .model-icon {
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+            border-radius: 50%;
+        }
+        
+        .logistic {
+            background-color: var(--logistic-color);
+        }
+        
+        .forest {
+            background-color: var(--forest-color);
+        }
+        
+        .xgboost {
+            background-color: var(--xgboost-color);
+        }
+
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="header-title">
+                <h1>Model Evaluation and Performance Analysis</h1>
+            </div>
+            <div class="nav-tabs">
+                <a href="recommendation_page.html" class="nav-tab">Recommendation System</a>
+                <a href="data_explanation.html" class="nav-tab">Data Analysis</a>
+                <a href="feature_analysis.html" class="nav-tab">Feature Analysis</a>
+                <a href="model_comparison.html" class="nav-tab">Model Comparison</a>
+                <a href="evaluation.html" class="nav-tab active">Model Evaluation</a>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <h2>Performance Metrics Overview</h2>
+        
+        <div class="dashboard">
+            <div class="card full-width">
+                <h3>Overall Model Performance Comparison</h3>
+                <div class="visualization">
+                    <img src="Images/Model_Performance_Comparison.png" alt="Model Performance Comparison Bar Chart">
+                </div>
+                <div class="insights">
+                    <h4>Key Insights:</h4>
+                    <ul>
+                        <li>XGBoost achieves the highest scores across all evaluation metrics, with particularly strong ROC AUC performance (0.95)</li>
+                        <li>Random Forest shows balanced performance with ROC AUC of 0.90 and consistent scores on other metrics</li>
+                        <li>Logistic Regression performs adequately (around 0.58) but has notably high ROC AUC (0.87) compared to its other metrics</li>
+                        <li>XGBoost and Random Forest both achieve the same Top Class Accuracy (0.73), significantly higher than Logistic Regression (0.56)</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>Metrics Heatmap</h3>
+                <div class="visualization">
+                    <img src="/Users/durgasrithadongla/Desktop/cap5771sp25-project/Visualizations/Evaluation/metrics_heatmap.png" alt="Model Metrics Comparison Heatmap">
+                </div>
+                <div class="insights">
+                    <h4>Observations:</h4>
+                    <ul>
+                        <li>The heatmap clearly shows XGBoost's superior performance across all metrics</li>
+                        <li>ROC AUC is the strongest metric for all models</li>
+                        <li>Random Forest shows moderate performance levels between XGBoost and Logistic Regression</li>
+                        <li>Logistic Regression shows consistently lower scores compared to the ensemble methods</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <h2>Confusion Matrix Analysis</h2>
+        
+        <div class="model-toggle-buttons">
+            <button class="model-toggle-button xgboost-btn active" data-target="xgboost-matrix">XGBoost</button>
+            <button class="model-toggle-button forest-btn" data-target="forest-matrix">Random Forest</button>
+            <button class="model-toggle-button logistic-btn" data-target="logistic-matrix">Logistic Regression</button>
+        </div>
+        
+        <div class="card">
+            <h3>Confusion Matrices</h3>
+            
+            <div class="matrix-container active" id="xgboost-matrix">
+                <div class="visualization">
+                    <img src="/Users/durgasrithadongla/Desktop/cap5771sp25-project/Visualizations/Evaluation/confusion_matrix_XGBoost.png" alt="XGBoost Confusion Matrix">
+                </div>
+                <div class="insights">
+                    <h4>XGBoost Matrix Analysis:</h4>
+                    <p>The XGBoost model shows strong diagonal values (0.39-0.58), indicating good prediction accuracy across all classes. Class 4 has the highest accuracy at 0.58, while Class 1 has the lowest at 0.39. There is some confusion between adjacent classes, but overall the model maintains good class separation with minimal off-diagonal values.</p>
+                </div>
+            </div>
+            
+            <div class="matrix-container" id="forest-matrix">
+                <div class="visualization">
+                    <img src="/Users/durgasrithadongla/Desktop/cap5771sp25-project/Visualizations/Evaluation/confusion_matrix_Random_Forest.png" alt="Random Forest Confusion Matrix">
+                </div>
+                <div class="insights">
+                    <h4>Random Forest Matrix Analysis:</h4>
+                    <p>The Random Forest model shows good diagonal dominance with accuracy values between 0.39-0.62. Class 3 has the highest accuracy at 0.62, while Class 0 and Class 2 show more moderate performance (0.40 and 0.39). There is noticeable confusion between Class 0 and Class 3 (0.21 each way), indicating these classes have overlapping features.</p>
+                </div>
+            </div>
+            
+            <div class="matrix-container" id="logistic-matrix">
+                <div class="visualization">
+                    <img src="/Users/durgasrithadongla/Desktop/cap5771sp25-project/Visualizations/Evaluation/confusion_matrix_Logistic_Regression.png" alt="Logistic Regression Confusion Matrix">
+                </div>
+                <div class="insights">
+                    <h4>Logistic Regression Matrix Analysis:</h4>
+                    <p>The Logistic Regression model shows weaker diagonal values (0.30-0.51) compared to the other models. Class 0 has the highest accuracy at 0.51, while Class 2 has the lowest at 0.30. There is significant confusion between classes, particularly between Class 4 and Class 0 (0.28), indicating the model struggles to establish clear decision boundaries.</p>
+                </div>
+            </div>
+        </div>
+        
+        <h2>Feature Importance Analysis</h2>
+        
+        <div class="model-toggle-buttons">
+            <button class="model-toggle-button xgboost-btn active" data-target="xgboost-features">XGBoost</button>
+            <button class="model-toggle-button forest-btn" data-target="forest-features">Random Forest</button>
+        </div>
+        
+        <div class="card">
+            <h3>Feature Importance Rankings</h3>
+            
+            <div class="feature-container active" id="xgboost-features">
+                <div class="visualization">
+                    <img src="/Users/durgasrithadongla/Desktop/cap5771sp25-project/Visualizations/Evaluation/feature_importance_XGBoost.png" alt="XGBoost Feature Importance">
+                </div>
+                <div class="insights">
+                    <h4>XGBoost Feature Importance Analysis:</h4>
+                    <p>XGBoost identifies Feature_13 and Feature_4 as the most important predictors with importance scores of 0.08 and 0.078 respectively. The feature importance distribution is relatively balanced, with a gradual decrease in importance across features rather than a few dominant ones. The top 7 features (13, 4, 10, 7, 5, 6, 19) account for approximately 50% of the predictive power.</p>
+                </div>
+            </div>
+            
+            <div class="feature-container" id="forest-features">
+                <div class="visualization">
+                    <img src="/Users/durgasrithadongla/Desktop/cap5771sp25-project/Visualizations/Evaluation/feature_importance_Random_Forest.png" alt="Random Forest Feature Importance">
+                </div>
+                <div class="insights">
+                    <h4>Random Forest Feature Importance Analysis:</h4>
+                    <p>Random Forest places highest importance on Feature_4 with a score of nearly 0.1, followed by Feature_0 and Feature_9. The importance scores show a steeper decline compared to XGBoost, indicating Random Forest relies more heavily on its top features. The distribution suggests Feature_4 has almost twice the importance of features ranked 10th and below.</p>
+                </div>
+            </div>
+        </div>
+        
+        <h2>ROC Curve Analysis</h2>
+        
+        <div class="model-toggle-buttons">
+            <button class="model-toggle-button xgboost-btn active" data-target="xgboost-roc">XGBoost</button>
+            <button class="model-toggle-button forest-btn" data-target="forest-roc">Random Forest</button>
+            <button class="model-toggle-button logistic-btn" data-target="logistic-roc">Logistic Regression</button>
+        </div>
+        
+        <div class="card">
+            <h3>ROC Curves by Class</h3>
+            
+            <div class="roc-container active" id="xgboost-roc">
+                <div class="visualization">
+                    <img src="/Users/durgasrithadongla/Desktop/cap5771sp25-project/Visualizations/Evaluation/roc_curve_XGBoost.png" alt="XGBoost ROC Curves">
+                </div>
+                <div class="insights">
+                    <h4>XGBoost ROC Analysis:</h4>
+                    <p>XGBoost shows strong ROC performance with AUC values ranging from 0.76 to 0.79 across all classes. Class 2 performs best with an AUC of 0.79, while Class 1 has the lowest AUC at 0.76. The curves rise steeply in the low false positive rate region (0-0.2), indicating good true positive rates with minimal false positives, an important characteristic for a recommendation system.</p>
+                </div>
+            </div>
+            
+            <div class="roc-container" id="forest-roc">
+                <div class="visualization">
+                    <img src="/Users/durgasrithadongla/Desktop/cap5771sp25-project/Visualizations/Evaluation/roc_curve_Random_Forest.png" alt="Random Forest ROC Curves">
+                </div>
+                <div class="insights">
+                    <h4>Random Forest ROC Analysis:</h4>
+                    <p>Random Forest achieves higher AUC values than XGBoost, ranging from 0.78 to 0.82. Class 0 has the highest performance with an AUC of 0.82, while Class 1 has the lowest at 0.78. The curves show particularly strong performance in the early range (FPR 0-0.3), demonstrating excellent discrimination ability with true positive rates of 0.6-0.7 while maintaining very low false positive rates.</p>
+                </div>
+            </div>
+            
+            <div class="roc-container" id="logistic-roc">
+                <div class="visualization">
+                    <img src="/Users/durgasrithadongla/Desktop/cap5771sp25-project/Visualizations/Evaluation/roc_curve_Logistic_Regression.png" alt="Logistic Regression ROC Curves">
+                </div>
+                <div class="insights">
+                    <h4>Logistic Regression ROC Analysis:</h4>
+                    <p>Logistic Regression shows the lowest AUC values among the models, ranging from 0.67 to 0.72. Classes 0, 1, 3, and 4 perform similarly with AUCs around 0.71-0.72, while Class 2 lags at 0.67. The curves are more linear and closer to the diagonal random line, indicating weaker discrimination capability compared to the ensemble methods.</p>
+                </div>
+            </div>
+        </div>
+        
+        <h2>Model-Specific Performance Analysis</h2>
+        
+        <div class="card">
+            <div class="model-section">
+                <div class="model-title">
+                    <span class="model-icon xgboost"></span>
+                    <h3>XGBoost Model Analysis</h3>
+                </div>
+                <div class="insights">
+                    <h4>Strengths:</h4>
+                    <ul>
+                        <li>Highest overall performance across standard metrics (accuracy: 0.67, precision: 0.68, recall: 0.67)</li>
+                        <li>Strong ROC AUC of 0.95, indicating excellent classification capability</li>
+                        <li>Best normalized confusion matrix with strong diagonal values (0.39-0.58)</li>
+                        <li>Balanced feature importance distribution, suggesting good model robustness</li>
+                        <li>Class 4 and Class 2 show particularly strong performance (0.58 and 0.49 accuracy)</li>
+                    </ul>
+                    
+                    <h4>Limitations:</h4>
+                    <ul>
+                        <li>Some confusion between Class 1 and neighboring classes (0.15-0.21)</li>
+                        <li>Relies somewhat heavily on Feature_13 and Feature_4</li>
+                        <li>ROC curves show slightly lower AUC values for individual classes compared to Random Forest</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="model-section">
+                <div class="model-title">
+                    <span class="model-icon forest"></span>
+                    <h3>Random Forest Model Analysis</h3>
+                </div>
+                <div class="insights">
+                    <h4>Strengths:</h4>
+                    <ul>
+                        <li>Strong performance on Class 3 (0.62 accuracy) and Class 4 (0.55 accuracy)</li>
+                        <li>Highest per-class ROC AUC values (0.78-0.82)</li>
+                        <li>Good balance between accuracy (0.64) and Top Class Accuracy (0.73)</li>
+                        <li>Clear feature importance ranking with Feature_4 as the dominant predictor</li>
+                    </ul>
+                    
+                    <h4>Limitations:</h4>
+                    <ul>
+                        <li>More pronounced confusion between certain class pairs (e.g., Class 0 and Class 3)</li>
+                        <li>Heavily dependent on top features, potentially making it less robust to feature changes</li>
+                        <li>Lower overall metrics compared to XGBoost (precision: 0.64, recall: 0.64)</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="model-section">
+                <div class="model-title">
+                    <span class="model-icon logistic"></span>
+                    <h3>Logistic Regression Model Analysis</h3>
+                </div>
+                <div class="insights">
+                    <h4>Strengths:</h4>
+                    <ul>
+                        <li>Surprising ROC AUC performance (0.87) considering its lower accuracy metrics</li>
+                        <li>Good performance on Class 0 (0.51 accuracy)</li>
+                        <li>Simpler model structure with lower computational requirements</li>
+                        <li>Provides more interpretable coefficients for feature contribution</li>
+                    </ul>
+                    
+                    <h4>Limitations:</h4>
+                    <ul>
+                        <li>Significantly lower overall performance (accuracy: 0.58, precision: 0.59)</li>
+                        <li>Weak performance on Class 2 (0.30 accuracy)</li>
+                        <li>Substantial confusion between classes, indicating poor decision boundaries</li>
+                        <li>Limited capacity to model complex, non-linear relationships in the data</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <h2>Conclusions</h2>
+        
+        <div class="card">
+            <h3>Evaluation Summary</h3>
+            <div class="insights">
+                <h4>Key Findings:</h4>
+                <ul>
+                    <li>XGBoost is the superior model overall, with the highest performance across standard metrics and strong confusion matrix diagonal values.</li>
+                    <li>Random Forest offers excellent class-specific ROC performance and could be a good alternative with slightly lower complexity.</li>
+                    <li>Logistic Regression, while simpler, shows significantly lower performance and would not be recommended for the final recommendation system.</li>
+                    <li>Feature_4, Feature_13, and Feature_0 consistently emerge as important predictors across models.</li>
+                    <li>All models struggle somewhat with Class 1, suggesting this class may have overlapping characteristics with other classes.</li>
+                </ul>
+                
+                <h4>Recommendation:</h4>
+                <p>Based on the comprehensive evaluation, <strong>XGBoost</strong> should be selected as the primary model for the recommendation system. Its superior performance across metrics, balanced feature utilization, and strong confusion matrix results make it the most suitable choice. For production deployment, further fine-tuning could focus on improving Class 1 prediction and potentially creating an ensemble approach that leverages the class-specific strengths of both XGBoost and Random Forest.</p>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <p>Streaming Content Recommendation System - Model Evaluation</p>
+        </div>
+    </footer>
+
+    <script>
+        // Model toggle functionality
+        document.querySelectorAll('.model-toggle-button').forEach(button => {
+            button.addEventListener('click', () => {
+                // Get the target container type (matrix, features, or roc)
+                const targetId = button.dataset.target;
+                const containerType = targetId.split('-')[1]; // 'matrix', 'features', or 'roc'
+                
+                // Remove active class from all buttons of this type
+                document.querySelectorAll(`.model-toggle-button[data-target$="-${containerType}"]`).forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                // Add active class to clicked button
+                button.classList.add('active');
+                
+                // Hide all containers of this type
+                document.querySelectorAll(`.${containerType}-container`).forEach(container => {
+                    container.classList.remove('active');
+                });
+                
+                // Show the target container
+                document.getElementById(targetId).classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

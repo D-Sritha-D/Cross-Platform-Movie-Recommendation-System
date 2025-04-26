@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Recommendation System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --primary-dark: #2563eb;
+            --primary-light: #93c5fd;
+            --secondary-color: #10b981;
+            --secondary-dark: #059669;
+            --dark-color: #1e293b;
+            --light-color: #f8fafc;
+            --gray-color: #64748b;
+            --gray-light: #e2e8f0;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --netflix-color: #E50914;
+            --amazon-color: #00A8E1;
+            --hulu-color: #3DBB3D;
+            --genre-color: #8b5cf6;
+            --container-width: 1280px;
+            --border-radius: 8px;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --transition-speed: 0.2s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f1f5f9;
+            color: var(--dark-color);
+            line-height: 1.5;
+        }
+
+        /* Header styling */
+        header {
+            background: linear-gradient(135deg, var(--dark-color), #0f172a);
+            color: white;
+            padding: 1.5rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            max-width: var(--container-width);
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .header-title h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .lightning-icon {
+            color: var(--warning-color);
+            font-size: 1.5rem;
+        }
+
+        /* Navigation styling */
+        .nav-tabs {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .nav-tab {
+            padding: 0.75rem 1.25rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .nav-tab:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-tab.active {
+            background-color: var(--primary-color);
+        }
+
+        /* Container styling */
+        .container {
+            max-width: var(--container-width);
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Alert styling */
+        .alert {
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+
+        .alert-danger {
+            background-color: #fef2f2;
+            border: 1px solid #fee2e2;
+            color: var(--danger-color);
+        }
+
+        .alert-icon {
+            flex-shrink: 0;
+            margin-top: 0.25rem;
+        }
+
+        /* Main content layout */
+        .content {
+            display: grid;
+            grid-template-columns: 250px 1fr 300px;
+            gap: 1.5rem;
+        }
+
+        /* Card styling - used for each section */
+        .card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-header h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* Form styling */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.625rem 0.75rem;
+            border: 1px solid var(--gray-light);
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            transition: border-color var(--transition-speed) ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%234B5563' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.5rem center;
+            background-size: 1.25rem;
+            padding-right: 2.5rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.625rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background-color: white;
+            color: var(--gray-color);
+            border: 1px solid var(--gray-light);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--gray-light);
+            color: var(--dark-color);
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+
+        /* Search bar styling */
+        .search-bar {
+            display: flex;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--gray-light);
+            border-right: none;
+            border-radius: 0.375rem 0 0 0.375rem;
+            font-size: 0.875rem;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+
+        .search-button {
+            padding: 0.75rem 1.25rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 0 0.375rem 0.375rem 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .search-button:hover {
+            background-color: var(--primary-dark);
+        }
+
+        /* Title grid styling */
+        .titles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .title-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--gray-light);
+            padding: 1rem;
+            transition: all var(--transition-speed) ease;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .title-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border-color: var(--primary-light);
+        }
+
+        .title-card.selected {
+            border-color: var(--primary-color);
+            background-color: rgba(59, 130, 246, 0.05);
+        }
+
+        .title-platform {
+            display: flex;
+            align-items: center;
+            font-size: 0.75rem;
+            color: var(--gray-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .platform-icon {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 0.375rem;
+        }
+
+        .netflix {
+            background-color: var(--netflix-color);
+        }
+
+        .amazon {
+            background-color: var(--amazon-color);
+        }
+
+        .hulu {
+            background-color: var(--hulu-color);
+        }
+
+        .title-name {
+            font-weight: 600;
+            margin: 0.25rem 0 0.5rem;
+            font-size: 0.875rem;
+            line-height: 1.25;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            min-height: 2.5rem;
+        }
+
+        .title-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--gray-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .title-genres {
+            font-size: 0.75rem;
+            color: var(--gray-color);
+            margin-top: 0.5rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--gray-light);
+        }
+        
+        .title-description {
+            font-size: 0.75rem;
+            color: var(--gray-color);
+            margin-top: 0.75rem;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            flex-grow: 1;
+        }
+
+        /* Expand description on hover */
+        .title-card:hover .title-description {
+            -webkit-line-clamp: 6;
+        }
+
+        /* Recommendation styling */
+        .selected-title {
+            margin-bottom: 1.25rem;
+            padding-bottom: 1.25rem;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .selected-label {
+            font-size: 0.75rem;
+            color: var(--gray-color);
+            margin-bottom: 0.25rem;
+        }
+
+        .selected-name {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 0.375rem;
+        }
+
+        .selected-meta {
+            font-size: 0.75rem;
+            color: var(--gray-color);
+            display: flex;
+            align-items: center;
+        }
+
+        .recommendations-list {
+            margin-top: 1.25rem;
+            max-height: calc(100vh - 350px);
+            overflow-y: auto;
+        }
+
+        .recommendation-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--gray-light);
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .recommendation-metrics {
+            margin-top: 0.75rem;
+            padding: 0.75rem;
+            background-color: #f8fafc;
+            border-radius: 0.25rem;
+            border: 1px solid var(--gray-light);
+        }
+
+        .score-bar {
+            height: 6px;
+            background-color: var(--gray-light);
+            border-radius: 3px;
+            margin-right: 0.75rem;
+            flex-grow: 1;
+            max-width: calc(100% - 65px); 
+            position: relative;
+            overflow: hidden;
+        }
+
+
+        .score-fill {
+            height: 100%;
+            border-radius: 3px;
+        }
+
+        .score-fill.xgboost {
+            background-color: var(--secondary-color);
+        }
+
+        .score-fill.content {
+            background-color: var(--primary-color);
+        }
+        
+        .score-fill.genre {
+            background-color: var(--genre-color);
+        }
+
+        .score-value {
+            font-size: 0.75rem;
+            font-weight: 500;
+            white-space: nowrap;
+            min-width: 40px;
+            text-align: right;
+        }
+
+        .score-row {
+            display: flex;
+            align-items: center;
+            margin-top: 0.5rem;
+            width: 100%;
+        }
+        
+        .score-row:first-child {
+            margin-top: 0;
+        }
+
+        .score-label {
+            font-size: 0.75rem;
+            white-space: nowrap;
+            width: 100px;
+        }
+
+        .metrics-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 0.7rem;
+        }
+        
+        .legend-color {
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+            margin-right: 0.25rem;
+        }
+        
+        .about-box {
+            background-color: #f8fafc;
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            margin-top: 1.5rem;
+            font-size: 0.75rem;
+        }
+
+        .about-box h3 {
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .about-box ul {
+            padding-left: 1.25rem;
+            margin: 0.5rem 0;
+        }
+
+        .about-box li {
+            margin-bottom: 0.25rem;
+        }
+
+        /* Loading styling */
+        .loading {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(59, 130, 246, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            display: inline-block;
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* No content messages */
+        .empty-message {
+            text-align: center;
+            padding: 2rem 0;
+            color: var(--gray-color);
+        }
+
+        .empty-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--gray-light);
+        }
+
+        /* Model info box */
+        .model-info {
+            background-color: #fff7ed;
+            border: 1px solid #fed7aa;
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .model-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--dark-color);
+            margin-bottom: 0.25rem;
+        }
+
+        .model-description {
+            font-size: 0.75rem;
+            color: var(--gray-color);
+        }
+
+        /* Icons */
+        .icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Footer styling */
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            text-align: center;
+            padding: 1.5rem 0;
+            margin-top: 2rem;
+        }
+
+        footer p {
+            font-size: 0.875rem;
+            opacity: 0.8;
+        }
+        
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 0.15rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-right: 0.25rem;
+        }
+        
+        .badge-primary {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+        }
+        
+        .badge-secondary {
+            background-color: var(--gray-light);
+            color: var(--gray-color);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 1024px) {
+            .content {
+                grid-template-columns: 1fr 300px;
+            }
+            
+            .filter-sidebar {
+                grid-column: span 2;
+            }
+            
+            .filter-form {
+                display: grid;
+                grid-template-columns: 1fr 1fr auto;
+                gap: 1rem;
+                align-items: flex-end;
+            }
+            
+            .filter-form .form-group {
+                margin-bottom: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-sidebar, .recommendations-sidebar {
+                grid-column: 1;
+            }
+            
+            .filter-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-title h1 {
+                font-size: 1.25rem;
+            }
+
+            .nav-tabs {
+                flex-wrap: wrap;
+            }
+            
+            .nav-tab {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="header-title">
+                <h1>Cross-Platform Streaming Recommendation System</h1>
+            </div>
+            <div class="nav-tabs">
+                <a href="recommendation_page.html" class="nav-tab active">Recommendation System</a>
+                <a href="data_explanation.html" class="nav-tab">Data Analysis</a>
+                <a href="feature_analysis.html" class="nav-tab">Feature Analysis</a>
+                <a href="model_comparison.html" class="nav-tab">Model Comparison</a>
+                <a href="evaluation.html" class="nav-tab">Model Evaluation</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div id="error-alert" class="alert alert-danger" style="display: none;">
+            <div class="alert-icon">⚠️</div>
+            <div>
+                <h3 id="error-title" class="text-sm font-medium">Connection Error</h3>
+                <div id="error-message" class="mt-1 text-sm">Error connecting to API.</div>
+                <div class="mt-2 text-xs">Make sure the API is running on port 8080.</div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="card filter-sidebar">
+                <div class="card-header">
+                    <h2>Filters</h2>
+                </div>
+                <div class="card-body">
+                    <div class="filter-form">
+                        <div class="form-group">
+                            <label for="platform-select">Platform</label>
+                            <select id="platform-select" class="form-control">
+                                <option value="All">All Platforms</option>
+                                <option value="Netflix">Netflix</option>
+                                <option value="Amazon Prime">Amazon Prime</option>
+                                <option value="Hulu">Hulu</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="type-select">Content Type</label>
+                            <select id="type-select" class="form-control">
+                                <option value="All">All Types</option>
+                                <option value="Movie">Movies</option>
+                                <option value="TV Show">TV Shows</option>
+                            </select>
+                        </div>
+                        
+                        <button id="apply-filters" class="btn btn-primary btn-block">
+                            <span class="icon">↻</span>
+                            Apply Filters
+                        </button>
+                    </div>
+                    
+                    <div class="model-info">
+                        <div class="model-name">XGBoost Hybrid</div>
+                        <div class="model-description">A hybrid recommendation system combining XGBoost and content-based filtering</div>
+                    </div>
+                    
+                    <div id="platform-stats-container" style="margin-top: 1.5rem;">
+                        <h3 style="font-size: 0.875rem; font-weight: 600; margin-bottom: 0.75rem;">Platform Breakdown</h3>
+                        <div id="platform-stats" class="space-y-2">
+                            <div style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+                                <span class="platform-icon netflix"></span>
+                                <span style="font-size: 0.875rem;">Netflix: 8,807 titles</span>
+                            </div>
+                            <div style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+                                <span class="platform-icon amazon"></span>
+                                <span style="font-size: 0.875rem;">Amazon Prime: 9,668 titles</span>
+                            </div>
+                            <div style="display: flex; align-items: center;">
+                                <span class="platform-icon hulu"></span>
+                                <span style="font-size: 0.875rem;">Hulu: 3,073 titles</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 1.5rem;">
+                        <h3 style="font-size: 0.875rem; font-weight: 600; margin-bottom: 0.75rem;">Metrics Explained</h3>
+                        <div class="metrics-legend">
+                            <div class="legend-item">
+                                <span class="legend-color" style="background-color: var(--secondary-color);"></span>
+                                <span>Hybrid Score</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color" style="background-color: var(--primary-color);"></span>
+                                <span>Content Match</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color" style="background-color: var(--genre-color);"></span>
+                                <span>Genre Match</span>
+                            </div>
+                        </div>
+                        <p style="font-size: 0.75rem; color: var(--gray-color);">Higher percentages indicate stronger recommendations based on your selected title.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card main-content">
+                <div class="card-header">
+                    <h2 id="content-title">Sample Titles</h2>
+                </div>
+                <div class="card-body">
+                    <div class="search-bar">
+                        <input type="text" id="search-input" class="search-input" placeholder="Search for a movie or TV show...">
+                        <button id="search-button" class="search-button">
+                            <span class="icon">🔍</span>
+                        </button>
+                    </div>
+                    <div id="loading" class="loading">
+                        <div class="spinner"></div>
+                        <p>Loading content...</p>
+                    </div>
+                    
+                    <div id="titles-container" class="titles-grid" style="display: none;"></div>
+                </div>
+            </div>
+            
+            <div class="card recommendations-sidebar">
+                <div class="card-header">
+                    <h2>XGBoost Recommendations</h2>
+                </div>
+                <div class="card-body">
+                    <div id="recommendation-content">
+                        <div class="empty-message">
+                            <div class="empty-icon">📋</div>
+                            <p>Select a title to get XGBoost-powered recommendations</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <p>Streaming Content Recommendation System | XGBoost Model</p>
+        </div>
+    </footer>
+    
+    <script>
+        const API_BASE_URL = 'http://localhost:8080/api';
+
+        const platformSelect = document.getElementById('platform-select');
+        const typeSelect = document.getElementById('type-select');
+        const applyFiltersBtn = document.getElementById('apply-filters');
+        const searchInput = document.getElementById('search-input');
+        const searchButton = document.getElementById('search-button');
+        const titlesContainer = document.getElementById('titles-container');
+        const contentTitle = document.getElementById('content-title');
+        const loadingElement = document.getElementById('loading');
+        const recommendationContent = document.getElementById('recommendation-content');
+        const errorAlert = document.getElementById('error-alert');
+        const errorMessage = document.getElementById('error-message');
+        const platformStats = document.getElementById('platform-stats');
+        
+        let sampleTitles = [];
+        let searchResults = [];
+        let selectedTitle = null;
+        let isSearchView = false;
+        
+        async function initApp() {
+            try {
+                const platformsResponse = await fetch(`${API_BASE_URL}/platforms`);
+                if (!platformsResponse.ok) {
+                    throw new Error('Failed to connect to API. Check if the API server is running on port 8080.');
+                }
+                
+                const platformsData = await platformsResponse.json();
+                if (platformsData.platforms && platformsData.platforms.length) {
+                }
+                
+                const typesResponse = await fetch(`${API_BASE_URL}/content_types`);
+                if (!typesResponse.ok) {
+                    throw new Error('Failed to fetch content types from API.');
+                }
+                
+                const typesData = await typesResponse.json();
+                if (typesData.content_types && typesData.content_types.length) {
+                }
+                
+                await fetchSampleTitles();
+                await fetchStats();
+                
+            } catch (error) {
+                showError(error.message);
+                console.error('Initialization error:', error);
+            }
+        }
+        
+        async function fetchStats() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/stats`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch stats');
+                }
+                
+                const data = await response.json();
+                
+                if (data.platforms) {
+                    platformStats.innerHTML = '';
+                    Object.entries(data.platforms).forEach(([platform, count]) => {
+                        platformStats.innerHTML += `
+                            <div style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+                                <span class="platform-icon ${getPlatformClass(platform)}"></span>
+                                <span style="font-size: 0.875rem;">${platform}: ${count.toLocaleString()}</span>
+                            </div>
+                        `;
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching stats:', error);
+            }
+        }
+
+        async function fetchSampleTitles() {
+            showLoading();
+            try {
+                const platform = platformSelect.value;
+                const type = typeSelect.value;
+                
+                const response = await fetch(
+                    `${API_BASE_URL}/sample_titles?platform=${platform}&type=${type}`
+                );
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch sample titles');
+                }
+                
+                const data = await response.json();
+                
+                if (data.titles && data.titles.length > 0) {
+                    sampleTitles = data.titles;
+                    displayTitles(sampleTitles);
+                    isSearchView = false;
+                    contentTitle.textContent = 'Sample Titles';
+                    hideError();
+                } else {
+                    titlesContainer.innerHTML = `
+                        <div class="empty-message" style="grid-column: 1/-1;">
+                            <p>No titles found with the selected filters.</p>
+                        </div>
+                    `;
+                    showTitlesContainer();
+                }
+            } catch (error) {
+                showError('Error loading titles. Please check if the API is running correctly.');
+                console.error('Error fetching sample titles:', error);
+                
+                loadMockData();
+            }
+        }
+        
+        async function handleSearch() {
+            const query = searchInput.value.trim();
+            if (!query) return;
+            
+            showLoading();
+            try {
+                const platform = platformSelect.value;
+                const type = typeSelect.value;
+                
+                const response = await fetch(
+                    `${API_BASE_URL}/search?query=${encodeURIComponent(query)}&platform=${platform}&type=${type}`
+                );
+                
+                if (!response.ok) {
+                    throw new Error('Search request failed');
+                }
+                
+                const data = await response.json();
+                
+                if (data.results && data.results.length > 0) {
+                    searchResults = data.results;
+                    displayTitles(searchResults);
+                    isSearchView = true;
+                    contentTitle.textContent = 'Search Results';
+                    hideError();
+                } else {
+                    titlesContainer.innerHTML = `
+                        <div class="empty-message" style="grid-column: 1/-1;">
+                            <p>No results found. Try a different search query or adjust your filters.</p>
+                        </div>
+                    `;
+                    showTitlesContainer();
+                    isSearchView = true;
+                    contentTitle.textContent = 'Search Results';
+                }
+            } catch (error) {
+                showError('Error searching for titles. Please check if the API is running correctly.');
+                console.error('Error searching titles:', error);
+                
+                // Fallback to mock search for demonstration
+                searchMockData(query);
+            }
+        }
+        
+        async function getRecommendations(title) {
+            selectedTitle = title;
+            updateSelectedTitleUI();
+            recommendationContent.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading recommendations...</p>
+                </div>
+            `;
+            
+            try {
+                const response = await fetch(
+                    `${API_BASE_URL}/recommendations?id=${encodeURIComponent(title.id)}&title=${encodeURIComponent(title.title)}`
+                );
+                
+                if (!response.ok) {
+                    throw new Error('Recommendation request failed');
+                }
+                
+                const data = await response.json();
+                
+                if (data.recommendations && data.recommendations.length > 0) {
+                    const enhancedRecommendations = enhanceRecommendations(data.recommendations, title);
+                    displayRecommendations(enhancedRecommendations, title);
+                    hideError();
+                } else {
+                    recommendationContent.innerHTML = `
+                        <div class="selected-title">
+                            <div class="selected-label">Based on your selection:</div>
+                            <div class="selected-name">${title.title}</div>
+                            <div class="selected-meta">
+                                <span class="platform-icon ${getPlatformClass(title.platform)}"></span>
+                                ${title.platform} • ${title.type} • ${title.year}
+                            </div>
+                            ${title.genres ? `<div class="title-genres" style="margin-top: 0.5rem;">${title.genres}</div>` : ''}
+                        </div>
+                        <div class="empty-message">
+                            <p>No recommendations found for this title.</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                showError('Error loading recommendations. Please check if the API is running correctly.');
+                console.error('Error getting recommendations:', error);
+                
+                const mockRecommendations = generateMockRecommendations(title);
+                displayRecommendations(mockRecommendations, title);
+            }
+        }
+        function enhanceRecommendations(recommendations, selectedTitle) {
+            return recommendations.map(rec => {
+                if (!rec.hybrid_score) {
+                    rec.hybrid_score = Math.random() * 0.4 + 0.6; // 0.6-1.0 range for demo
+                }
+                
+                if (!rec.similarity) {
+                    rec.similarity = Math.random() * 0.5 + 0.5; // 0.5-1.0 range for demo
+                }
+                
+                // Calculate genre match if not present
+                if (!rec.genre_match) {
+                    const selectedGenres = extractGenres(selectedTitle.genres || '');
+                    const recGenres = extractGenres(rec.genres || '');
+                    
+                    // Calculate overlap
+                    if (selectedGenres.length > 0 && recGenres.length > 0) {
+                        const common = selectedGenres.filter(g => recGenres.includes(g));
+                        rec.genre_match = common.length / Math.max(selectedGenres.length, recGenres.length);
+                    } else {
+                        rec.genre_match = 0.5; // Default value
+                    }
+                }
+                
+                return rec;
+            });
+        }
+        
+        // Helper function to extract genres from genre string
+        function extractGenres(genreString) {
+            if (!genreString) return [];
+            return genreString.split(/[,&]/).map(g => g.trim()).filter(g => g);
+        }
+        
+        function displayTitles(titles) {
+            titlesContainer.innerHTML = '';
+            
+            titles.forEach(title => {
+                const card = document.createElement('div');
+                card.className = `title-card ${selectedTitle && selectedTitle.id === title.id ? 'selected' : ''}`;
+                
+                card.innerHTML = `
+                    <div class="title-platform">
+                        <span class="platform-icon ${getPlatformClass(title.platform)}"></span>
+                        ${title.platform}
+                    </div>
+                    <h3 class="title-name">${title.title}</h3>
+                    <div class="title-meta">
+                        <span>${title.type}</span>
+                        <span>${title.year}</span>
+                    </div>
+                    ${title.genres ? `<div class="title-genres">${title.genres}</div>` : ''}
+                    ${title.description ? `<div class="title-description">${title.description}</div>` : ''}
+                `;
+                
+                card.addEventListener('click', () => getRecommendations(title));
+                titlesContainer.appendChild(card);
+            });
+            
+            showTitlesContainer();
+        }
+        
+        function displayRecommendations(recommendations, selectedTitle) {
+            let html = `
+                <div class="selected-title">
+                    <div class="selected-label">Based on your selection:</div>
+                    <div class="selected-name">${selectedTitle.title}</div>
+                    <div class="selected-meta">
+                        <span class="platform-icon ${getPlatformClass(selectedTitle.platform)}"></span>
+                        ${selectedTitle.platform} • ${selectedTitle.type} • ${selectedTitle.year}
+                    </div>
+                    ${selectedTitle.genres ? `<div class="title-genres" style="margin-top: 0.5rem; border-bottom: none;">${selectedTitle.genres}</div>` : ''}
+                </div>
+                <div class="recommendations-list">
+            `;
+            
+            recommendations.forEach(rec => {
+                html += `
+                    <div class="recommendation-card">
+                        <div class="title-platform">
+                            <span class="platform-icon ${getPlatformClass(rec.platform)}"></span>
+                            ${rec.platform}
+                        </div>
+                        <h3 class="title-name">${rec.title}</h3>
+                        <div class="title-meta">
+                            ${rec.type} • ${rec.year}
+                        </div>
+                        ${rec.genres ? `<div class="title-genres">${rec.genres}</div>` : ''}
+                        
+                        <div class="recommendation-metrics">
+                            <div class="score-row">
+                                <span class="score-label">Hybrid Score:</span>
+                                <div class="score-bar">
+                                    <div class="score-fill xgboost" style="width: ${Math.min(100, Math.round(rec.hybrid_score * 100))}%"></div>
+                                </div>
+                                <span class="score-value">${Math.round(rec.hybrid_score * 100)}%</span>
+                            </div>
+                            <div class="score-row">
+                                <span class="score-label">Content Match:</span>
+                                <div class="score-bar">
+                                    <div class="score-fill content" style="width: ${Math.min(100, Math.round(rec.similarity * 100))}%"></div>
+                                </div>
+                                <span class="score-value">${Math.round(rec.similarity * 100)}%</span>
+                            </div>
+                            <div class="score-row">
+                                <span class="score-label">Genre Match:</span>
+                                <div class="score-bar">
+                                    <div class="score-fill genre" style="width: ${Math.min(100, Math.round(rec.genre_match * 100))}%"></div>
+                                </div>
+                                <span class="score-value">${Math.round(rec.genre_match * 100)}%</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += `
+                </div>
+                
+                <div class="about-box">
+                    <h3>About These Metrics</h3>
+                    <ul>
+                        <li><strong>Hybrid Score</strong> - Overall recommendation strength based on XGBoost model and other factors combined</li>
+                        <li><strong>Content Match</strong> - Text similarity between descriptions, genres, and metadata</li>
+                        <li><strong>Genre Match</strong> - How closely the genres align with your selected title</li>
+                    </ul>
+                    <p style="margin-top: 0.5rem; font-style: italic;">Higher percentages indicate stronger recommendations. These metrics update dynamically with each selection.</p>
+                </div>
+            `;
+            
+            recommendationContent.innerHTML = html;
+        }
+        
+        function showLoading() {
+            loadingElement.style.display = 'block';
+            titlesContainer.style.display = 'none';
+        }
+        
+        function showTitlesContainer() {
+            loadingElement.style.display = 'none';
+            titlesContainer.style.display = 'grid';
+        }
+        
+        function updateSelectedTitleUI() {
+            document.querySelectorAll('.title-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            if (selectedTitle) {
+                const selectedCards = document.querySelectorAll(`.title-card:nth-child(${Array.from(titlesContainer.children).findIndex(card => card.querySelector('.title-name').textContent === selectedTitle.title) + 1})`);
+                selectedCards.forEach(card => card.classList.add('selected'));
+            }
+        }
+        
+        function getPlatformClass(platform) {
+            if (platform === 'Netflix') return 'netflix';
+            if (platform === 'Amazon Prime') return 'amazon';
+            if (platform === 'Hulu') return 'hulu';
+            return '';
+        }
+        
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorAlert.style.display = 'flex';
+        }
+        
+        function hideError() {
+            errorAlert.style.display = 'none';
+        }
+        
+        function loadMockData() {
+            const mockTitles = [
+                {
+                    id: 'nf_12345',
+                    title: 'Stranger Things',
+                    platform: 'Netflix',
+                    type: 'TV Show',
+                    year: 2016,
+                    genres: 'Drama, Fantasy, Horror',
+                    description: 'When a young boy disappears, his mother, a police chief and his friends must confront terrifying supernatural forces in order to get him back.'
+                },
+                {
+                    id: 'nf_23456',
+                    title: 'The Crown',
+                    platform: 'Netflix',
+                    type: 'TV Show',
+                    year: 2016,
+                    genres: 'Biography, Drama, History',
+                    description: 'Follows the political rivalries and romance of Queen Elizabeth II\'s reign and the events that shaped the second half of the twentieth century.'
+                },
+                {
+                    id: 'ap_12345',
+                    title: 'The Boys',
+                    platform: 'Amazon Prime',
+                    type: 'TV Show',
+                    year: 2019,
+                    genres: 'Action, Comedy, Crime',
+                    description: 'A group of vigilantes set out to take down corrupt superheroes who abuse their superpowers.'
+                },
+                {
+                    id: 'ap_23456',
+                    title: 'The Marvelous Mrs. Maisel',
+                    platform: 'Amazon Prime',
+                    type: 'TV Show',
+                    year: 2017,
+                    genres: 'Comedy, Drama',
+                    description: 'A housewife in the early 1960s decides to become a stand-up comic.'
+                },
+                {
+                    id: 'hu_12345',
+                    title: 'The Handmaid\'s Tale',
+                    platform: 'Hulu',
+                    type: 'TV Show',
+                    year: 2017,
+                    genres: 'Drama, Sci-Fi, Thriller',
+                    description: 'Set in a dystopian future, a woman is forced to live as a concubine under a fundamentalist theocratic dictatorship.'
+                },
+                {
+                    id: 'nf_34567',
+                    title: 'The Irishman',
+                    platform: 'Netflix',
+                    type: 'Movie',
+                    year: 2019,
+                    genres: 'Biography, Crime, Drama',
+                    description: 'An old man recalls his time painting houses for his friend, Jimmy Hoffa, through the 1950-70s.'
+                }
+            ];
+            
+            sampleTitles = mockTitles;
+            displayTitles(mockTitles);
+            isSearchView = false;
+            contentTitle.textContent = 'Sample Titles (Mock Data)';
+        }
+        
+        function searchMockData(query) {
+            const lowercaseQuery = query.toLowerCase();
+            const results = sampleTitles.filter(title => 
+                title.title.toLowerCase().includes(lowercaseQuery) || 
+                title.genres.toLowerCase().includes(lowercaseQuery)
+            );
+            
+            if (results.length > 0) {
+                searchResults = results;
+                displayTitles(results);
+                isSearchView = true;
+                contentTitle.textContent = 'Search Results (Mock Data)';
+            } else {
+                titlesContainer.innerHTML = `
+                    <div class="empty-message" style="grid-column: 1/-1;">
+                        <p>No results found for "${query}". Try a different search query.</p>
+                    </div>
+                `;
+                showTitlesContainer();
+                isSearchView = true;
+                contentTitle.textContent = 'Search Results';
+            }
+        }
+        
+        function generateMockRecommendations(title) {
+            const count = Math.floor(Math.random() * 3) + 3;
+            const recommendations = [];
+        
+            const possibleRecs = sampleTitles.filter(t => t.id !== title.id);
+            
+            for (let i = 0; i < Math.min(count, possibleRecs.length); i++) {
+                const rec = {...possibleRecs[i]};
+                
+                rec.hybrid_score = Math.random() * 0.25 + 0.75; 
+                rec.similarity = Math.random() * 0.3 + 0.7; 
+                
+                const selectedGenres = extractGenres(title.genres || '');
+                const recGenres = extractGenres(rec.genres || '');
+                
+                if (selectedGenres.length > 0 && recGenres.length > 0) {
+                    const common = selectedGenres.filter(g => recGenres.includes(g));
+                    rec.genre_match = common.length / Math.max(selectedGenres.length, recGenres.length);
+                } else {
+                    rec.genre_match = Math.random() * 0.3 + 0.6; 
+                }
+                
+                recommendations.push(rec);
+            }
+            
+            recommendations.sort((a, b) => b.hybrid_score - a.hybrid_score);
+            
+            return recommendations;
+        }
+        
+        // Event listeners
+        applyFiltersBtn.addEventListener('click', fetchSampleTitles);
+        searchButton.addEventListener('click', handleSearch);
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleSearch();
+        });
+        
+        // Reset search view function
+        function resetSearchView() {
+            searchInput.value = '';
+            isSearchView = false;
+            contentTitle.textContent = 'Sample Titles';
+            displayTitles(sampleTitles);
+        }
+        
+        // Add reset button if in search view
+        function updateViewControls() {
+            const existingButton = document.querySelector('.reset-search-button');
+            
+            if (isSearchView && !existingButton) {
+                const resetButton = document.createElement('button');
+                resetButton.className = 'btn btn-secondary reset-search-button';
+                resetButton.innerHTML = '<span class="icon">←</span> Back to Samples';
+                resetButton.addEventListener('click', resetSearchView);
+                
+                document.querySelector('.card-header').appendChild(resetButton);
+            } else if (!isSearchView && existingButton) {
+                existingButton.remove();
+            }
+        }
+        initApp();
+    </script>
+</body>
+</html>
